@@ -1,15 +1,15 @@
-function [root_value,counter] = NR_root_finder(Biot_number,root_count)
+function [root_value,counter] = hlf_root_finder(Biot_number, lower, Higher)
 %the function will find the root value of an accesory term for
 % transient heat heat conduction of cylindrical items.
 
-%   The function is guessing a number, and using the Newton-Rapson
+%   The function is guessing a number, and using the halfening
 %   method to find the nearest root of the function.
 
 %initilizers
     too_many_loops_text = ['We are passed the 10000th loop, it seems we '...
            'have a problem'];
     counter = 0;
-    x=root_count;
+    %x = root_count;
     func_value=10;
     epsilon = 1e-3; % Define a small tolerance for convergence
     while true
@@ -22,17 +22,17 @@ function [root_value,counter] = NR_root_finder(Biot_number,root_count)
         %in case of an unresoled question, the counter will prevent from
         %infinte loop
         counter = counter + 1;
-        %getting the bessel functions values into compact form, for
-        %improved readabillty
-        J0 = besselj(0, x);
-        J1 = besselj(1, x);
-        J2 = besselj(2, x);
-        %calculationg the function and derived values:
-        func_value = x*(J1/J0) - Biot_number;
-        deriv_value = (J1/J0)*(1+(x*(J1/J0))) - x/2 - J2/(2*J0);
-        %the Newton-Raphson method core
-        y = x - (func_value/deriv_value);
-        x = y;
+        new = (lower + Higher)/2;
+        f_lower = func_calc(lower, Biot_number);
+        f_new = func_calc(new, Biot_number);
+        if f_new*f_lower < 0
+            Higher = new;
+        elseif f_new*f_lower == 0
+            root_value = new;
+            break;
+        else
+            lower = new;
+        end
         
     end
     disp(counter);
