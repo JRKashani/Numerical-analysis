@@ -1,4 +1,5 @@
-function [root_value,counter] = NR_root_finder(Biot_number,root_count)
+function [root_value,counter] = NR_root_finder(Biot_number,root_count, ...
+    first_guess, epsilon)
 %the function will find the root value of an accesory term for
 % transient heat heat conduction of cylindrical items.
 
@@ -6,13 +7,15 @@ function [root_value,counter] = NR_root_finder(Biot_number,root_count)
 %   method to find the nearest root of the function.
 
 %initilizers
-    too_many_loops_text = ['We are passed the 10000th loop, it seems we '...
-           'have a problem'];
+    too_many_loops_text = ['We are passed the 10000th loop, it seems'...
+        'we have a problem'];
     counter = 0;
-    x=root_count;
-    func_value=10;
-    epsilon = 1e-3; % Define a small tolerance for convergence
-    while true
+    flag = 0;
+    x = first_guess;
+    func_value = x*(besselj(1, x)/besselj(0, x)) - Biot_number;
+        
+    %%epsilon = 1e-3; % Define a small tolerance for convergence
+    while flag == 0
         if abs(func_value) < epsilon
           root_value = x;
           break;

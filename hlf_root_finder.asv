@@ -1,5 +1,5 @@
 function [root_value,counter] = hlf_root_finder(Biot_number, lower_guess...
-    , higher_guess, epsilon)
+    , higher_guess)
 %the function will find the root value of an accesory term for
 % transient heat heat conduction of cylindrical items.
 
@@ -10,10 +10,10 @@ function [root_value,counter] = hlf_root_finder(Biot_number, lower_guess...
     too_many_loops_text = ['We are passed the 10000th loop, it seems we '...
            'have a problem'];
     counter = 0;
-    flag = 0;
+    %x = root_count;
     func_value=10;
-    %epsilon = 1e-3; % Define a small tolerance for convergence
-    while flag == 0
+    epsilon = 1e-3; % Define a small tolerance for convergence
+    while true
         if abs(func_value) < epsilon
           root_value = x;
           break;
@@ -30,7 +30,7 @@ function [root_value,counter] = hlf_root_finder(Biot_number, lower_guess...
             higher_guess = new;
         elseif f_new*f_lower == 0
             root_value = new;
-            flag = 1;
+            break;
         else
             lower_guess = new;
         end
