@@ -6,7 +6,6 @@ epsilon = 1e-6;
 
 J0_roots_short = zeros(1, 1000);
 J0_roots_long = zeros(1, 10000);
-J0_roots_long2 = zeros(1, 10000);
 
 for i = 1:1000
     while(flag == 0)
@@ -36,7 +35,7 @@ for i = 1:1000
     counter = 0;
 
     lower = x_new + 0.1;
-    upper = x_new + 0.2 + pi;
+    upper = x_new + 0.1 + pi;
 end
 
 writematrix(J0_roots_short, 'roots_short.txt');

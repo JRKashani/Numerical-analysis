@@ -11,7 +11,7 @@ function [root_value] = project1(Bi, m)
     counter = 0;
 
     if m = 1;
-        Bi_section_root_finder(0.3, 2.4, Bi, epsilon)
+        root_value = Bi_section_root_finder(0.3, 2.4, Bi, epsilon);
     elseif m <= 1000
         J0_roots = readmatrix("roots_short.txt");
         higher_guess = J0_roots(m)-0.1;
@@ -28,14 +28,23 @@ function [root_value] = project1(Bi, m)
         root_value = ...
             Bi_section_root_finder(lower_guess, higher_guess, Bi, epsilon);
     else
-        highest_known_discontinuity = J0_roots(10000);
+        J0_discontinuity = discont_finder(J0_roots(10000)+0.01,...
+            J0_roots(10000) + 0.01 + pi, m);
+        
+        
+        while(flag == 0)
+            counter = counter + 1;
+            if counter > 10000
+                error("The main function is running too many iterrations");
+            end
+
+
+        end
     end
 
-    while(flag == 0)
-        counter = counter + 1;
-        if counter > 10000
-            error("The main function is running too much iterrations")
-    end
+    
+
+    
 
 
 
