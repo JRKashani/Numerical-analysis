@@ -29,18 +29,23 @@ function [root_value] = project1(Bi, m)
             Bi_section_root_finder(lower_guess, higher_guess, Bi, epsilon);
     else
         highest_known_discontinuity = J0_roots(10000);
-    end
+        high_roots_array = zeros(1, m-10000);
 
-    high_roots_array = zeros(1, m);
+        while(flag == 0)
+            counter = counter + 1;
+            if counter > 10000
+                error("The main function is running too many iterrations");
+            end
 
-    while(flag == 0)
-        counter = counter + 1;
-        if counter > 10000
-            error("The main function is running too many iterrations");
+            temp_epsilon = 10^(-2);
+            
+
         end
-        temp_epsilon = 10^(-2);
-
     end
+
+    
+
+    
 
 
 
