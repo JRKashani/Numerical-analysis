@@ -1,3 +1,4 @@
-function [y] = J0(x)
-    y = besselj(0,x);
+function [yOut] = J0(xIn)
+
+    yOut = besselj(0, xIn);
 end
