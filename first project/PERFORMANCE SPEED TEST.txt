@@ -1,0 +1,30 @@
+--- PART 2: PERFORMANCE SPEED TEST (100,000 Runs) ---
+Benchmarking for Bi=60.0, m=1...
+Manual Code Total Time:    9.2955 seconds
+AI Code Total Time:        5.0621 seconds
+Speedup Factor:          1.84x faster
+
+--- PART 2: PERFORMANCE SPEED TEST (100,000 Runs) ---
+Benchmarking for Bi=58.7, m=2...
+Manual Code Total Time:   15.8030 seconds
+AI Code Total Time:       14.4358 seconds
+Speedup Factor:          1.09x faster
+
+--- PART 2: PERFORMANCE SPEED TEST (100,000 Runs) ---
+Benchmarking for Bi=0.4, m=3...
+Manual Code Total Time:   16.7616 seconds
+AI Code Total Time:       17.0403 seconds
+Speedup Factor:          0.98x faster
+
+--- PART 2: PERFORMANCE SPEED TEST (100,000 Runs) ---
+Benchmarking for Bi=43.8, m=8...
+Manual Code Total Time:   24.3076 seconds
+AI Code Total Time:       55.9455 seconds
+Speedup Factor:          0.43x faster
+
+
+--- PART 2: PERFORMANCE SPEED TEST (100,000 Runs) ---
+Benchmarking for Bi=9.4, m=47...
+Manual Code Total Time:   68.4326 seconds
+AI Code Total Time:      234.5463 seconds
+Speedup Factor:          0.29x faster

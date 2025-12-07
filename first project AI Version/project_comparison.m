@@ -13,10 +13,10 @@ fprintf('==============================================================\n');
 test_cases = [
     24.8, 1;   % Required Case 1
     24.8, 2;   % Required Case 2
-    24.8, 5;   % Required Case 3
-    0.5,  1;   % Small Bi
-    60.0, 3;   % Large Bi
-    10.0, 50;  % Large m (Stress Test)
+    24.8, 57;   % Required Case 3
+    0.5,  17;   % Small Bi
+    60.0, 87;   % Large Bi
+    10.0, 149;  % Large m (Stress Test)
 ];
 
 fprintf('\n--- PART 1: ACCURACY & ROOT LOCATION ---\n');
@@ -52,7 +52,7 @@ for i = 1:size(test_cases, 1)
 end
 
 fprintf('\n\n--- PART 2: PERFORMANCE SPEED TEST (100,000 Runs) ---\n');
-Bi_speed = 24.8; 
+Bi_speed = 59.9978; 
 m_speed = 1;
 num_runs = 100000;
 
