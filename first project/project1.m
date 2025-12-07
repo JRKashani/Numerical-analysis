@@ -20,39 +20,40 @@ function [root_value] = project1(Bi, m)
 %discontinuity and search for a root in those boundaries, assuring we 
 %won't be looking around a discontinuity in the function, and won't
 %need to check "m" roots of the function.
-    if m == 1
-        root_value = Bi_section_root_finder(0.3, 2.4, Bi, epsilon);
-    elseif m <= 100
-        J0_roots = readmatrix("roots_short.txt");
-        %given the Biot numbers, a distance of 0.1 from the discontinuty
-        % will suffice for every root. 
-        higher_guess = J0_roots(m) - 0.1; 
-        lower_guess = J0_roots(m-1) + 0.1;
-        root_value = ...
-            Bi_section_root_finder(lower_guess, higher_guess, Bi, epsilon);
-    else
-        J0_roots = readmatrix("roots_long.txt");
-        %the readmatrix comand is slow for this size of a file, so we
-        %preffered to split the roots files and open only the neccesary
-        %one.
-    end
+    % if m == 1
+    %     root_value = Bi_section_root_finder(0.3, 2.4, Bi, epsilon);
+    % elseif m <= 100
+    %     J0_roots = readmatrix("roots_short.txt");
+    %     %given the Biot numbers, a distance of 0.1 from the discontinuty
+    %     % will suffice for every root. 
+    %     higher_guess = J0_roots(m) - 0.1; 
+    %     lower_guess = J0_roots(m-1) + 0.1;
+    %     root_value = ...
+    %         Bi_section_root_finder(lower_guess, higher_guess, Bi, epsilon);
+    % else
+    %     J0_roots = readmatrix("roots_long.txt");
+    %     %the readmatrix comand is slow for this size of a file, so we
+    %     %preffered to split the roots files and open only the neccesary
+    %     %one.
+    % end
+    % 
+    % if m > 100 && m <= 10000
+    %     higher_guess = J0_roots(m) - 0.1;
+    %     lower_guess = J0_roots(m-1) + 0.1;
+    %     root_value = ...
+    %         Bi_section_root_finder(lower_guess, higher_guess, Bi, epsilon);
+    % elseif m > 10000
+    %     %if there is no other choise, we will continue mapping the
+    %     %discontinuiues and find the root between the (m-1)-th and m-th
+    %     %discontinuity points. this is obviuosly the longest and least
+    %     %desired path to take. the "pi" distance is aprroximatly the
+    %     %bessel function frequncy.
 
-    if m > 100 && m <= 10000
-        higher_guess = J0_roots(m) - 0.1;
-        lower_guess = J0_roots(m-1) + 0.1;
-        root_value = ...
-            Bi_section_root_finder(lower_guess, higher_guess, Bi, epsilon);
-    elseif m > 10000
-        %if there is no other choise, we will continue mapping the
-        %discontinuiues and find the root between the (m-1)-th and m-th
-        %discontinuity points. this is obviuosly the longest and least
-        %desired path to take. the "pi" distance is aprroximatly the
-        %bessel function frequncy.
-
-        [lower_discon, higher_discon] = discont_finder(J0_roots(10000)...
-            + 0.01, J0_roots(10000) + 0.01 + pi, m);
+        % [lower_discon, higher_discon] = discont_finder(J0_roots(10000)...
+        %     + 0.01, J0_roots(10000) + 0.01 + pi, m);
+        [lower_discon, higher_discon] = discont_finder(0.1, pi+0.1, m);
         root_value = Bi_section_root_finder(lower_discon + 0.1,...
             higher_discon - 0.1, Bi, epsilon);
-    end
+   % end
     
 end

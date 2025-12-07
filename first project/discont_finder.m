@@ -12,6 +12,9 @@ function [x_prev, x_m] = discont_finder(xIn1, xIn2, m)
     x_prev = 0;
     x_m = 0;
     epsilon = 0.0001;
+    if m <= 10000
+        m = m + 10000;
+    end
 
     for i = 1:m-10000
         %the loop will run m-10000 times to return the m-th root while
