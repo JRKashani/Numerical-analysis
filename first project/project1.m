@@ -13,6 +13,13 @@ function [root_value] = project1(Bi, m)
 %defining the accuracy which we aim for.
     epsilon = 10^(-6);
 
+        [lower_discon, higher_discon] = discont_finder(2.3, 2.6, m);
+        root_value = Bi_section_root_finder(lower_discon + 0.01,...
+            higher_discon - 0.01, Bi, epsilon);
+   % end
+    
+end
+
 %to save run time, we made 2 txt files containing the discontinuites of 
 %the function, which are the roots of the zeroeth bessel function, more 
 %specifically the first 100 roots, and the first 10000, and to find the
@@ -51,9 +58,3 @@ function [root_value] = project1(Bi, m)
 
         % [lower_discon, higher_discon] = discont_finder(J0_roots(10000)...
         %     + 0.01, J0_roots(10000) + 0.01 + pi, m);
-        [lower_discon, higher_discon] = discont_finder(0.1, pi+0.1, m);
-        root_value = Bi_section_root_finder(lower_discon + 0.1,...
-            higher_discon - 0.1, Bi, epsilon);
-   % end
-    
-end

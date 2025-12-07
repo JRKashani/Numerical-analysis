@@ -11,7 +11,6 @@ function [x_prev, x_m] = discont_finder(xIn1, xIn2, m)
     upper = xIn2;
     x_prev = 0;
     x_m = 0;
-    epsilon = 0.0001;
     if m <= 10000
         m = m + 10000;
     end
@@ -19,17 +18,18 @@ function [x_prev, x_m] = discont_finder(xIn1, xIn2, m)
     for i = 1:m-10000
         %the loop will run m-10000 times to return the m-th root while
         %constantly keeping the previous root.
+        if i > (m - 10000 - 2)
+                epsilon = 10^(-7);
+                %improving the accuracy in the last roots, the ones that
+                %will be used.
+        else
+            epsilon = 0.0001;
+        end
         while(flag == 0)
             if counter > 2000
                 error("Too many iterations, we have a problem")
                 %preventing infinte loop, the counter is adding in the end
                 %of it
-            end
-
-            if i > (m - 10000 - 2)
-                epsilon = 10^(-7);
-                %improving the accuracy in the last roots, the ones that
-                %will be used.
             end
             
             if sec_flag == 0
@@ -58,8 +58,27 @@ function [x_prev, x_m] = discont_finder(xIn1, xIn2, m)
                 %if not close enough to a root, cutting by half the range
                 %and checking for different signs of the function at the
                 %boundries.
-            else
+            elseif f_lower*f_xnew > 0
                 lower = x_new;
+%practically, the rest of those if statements are meaningless, it will
+%never reach them.
+            elseif f_lower == 0
+                if i > (m - 10000 - 2)
+                    x_prev = x_m;
+                    x_m = lower;
+                end
+                flag = 1;
+                %each root being identified, but only the relevant one
+                %stored
+            elseif f(upper, Bi) == 0
+                if i > (m - 10000 - 2)
+                    x_prev = x_m;
+                    x_m = upper;
+                end
+                flag = 1;
+                %each root being identified, but only the relevant one
+                %stored
+                
             end
             
             counter = counter + 1;
