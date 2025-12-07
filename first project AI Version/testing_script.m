@@ -7,10 +7,10 @@
 clc; clear; close all;
 
 % Configuration
-num_tests = 10;
+num_tests = 1000;
 min_Bi = 0.1;
 max_Bi = 60;
-max_m = 500;
+max_m = 5000;
 
 fprintf('Running %d random tests...\n', num_tests);
 fprintf('%-6s | %-6s | %-10s | %-10s | %-12s | %-10s\n', ...

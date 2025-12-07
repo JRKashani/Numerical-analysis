@@ -38,13 +38,12 @@ function root = SolveBesselAI(Bi, m)
     
     x_min = NaN;
     x_max = NaN;
-    [f_next, ~] = target_func(x_curr);
     bracket_found = false;
 
     while ~bracket_found
         x_next = x_curr + step_size;
         
-        f_curr = f_next;
+        [f_currf_;
         [f_next, ~] = target_func(x_next);
         
         % Check for sign change
@@ -72,7 +71,7 @@ function root = SolveBesselAI(Bi, m)
         [fb, ~] = target_func(x_max);
         
         % Safety: Ensure bracket is valid before starting
-        if fa * fb > 0
+        if sign(fa) == sign(fb)
             error('Invalid bracket: endpoints have same sign');
         end
         
@@ -80,15 +79,12 @@ function root = SolveBesselAI(Bi, m)
         x0 = x_min - fa * (x_max - x_min) / (fb - fa);
 
         % Attempt Constrained Newton-Raphson
-        [root, ~] = run_newton(target_func, x0, tol, max_iter,...
-            x_min, x_max);
+        [root, ~] = run_newton(target_func, x0, tol, max_iter, x_min, x_max);
         
     catch
         % Fallback to Bisection
-        % (Triggered if Newton diverges, leaves bracket, or hits
-        % zero derivative)
-        [root, ~] = run_bisection(target_func, x_min, x_max, tol,...
-            max_iter*10);
+        % (Triggered if Newton diverges, leaves bracket, or hits zero derivative)
+        [root, ~] = run_bisection(target_func, x_min, x_max, tol, max_iter*10);
     end
 end
 
@@ -111,10 +107,6 @@ function [x, iter] = run_newton(func, x, tol, max_iter, xmin, xmax)
         if x_new < xmin || x_new > xmax
             error('Newton iterate left the valid bracket');
         end
-        if x_new > xmax - (xmax-xmin)/10
-            x_new = (x_new + xmax)/2;
-        end
-
         
         % Convergence Check
         if abs(x_new - x) < tol
@@ -132,7 +124,7 @@ function [root, iter] = run_bisection(func, a, b, tol, max_iter)
     [fb, ~] = func(b);
     
     % Final safety check before burning iterations
-    if fa * fb > 0
+    if sign(fa) == sign(fb)
          error('Bisection failed: Bracket invalid (same signs)');
     end
     
@@ -145,7 +137,7 @@ function [root, iter] = run_bisection(func, a, b, tol, max_iter)
             return;
         end
         
-        if fc * fa > 0
+        if sign(fc) == sign(fa)
             a = c; fa = fc;
         else
             b = c; % fb = fc;
