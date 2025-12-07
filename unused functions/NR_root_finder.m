@@ -1,10 +1,10 @@
-function [root_value] = NR_root_finder(xIn, Bi_num, epsilon)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+function [root_value] = NR_root_finder(xIn, Bi_num)
 
+    tic;
     flag = 0;
     counter = 0;
     x_n = xIn;
+    epsilon = 10^(-5);
         
     while(flag == 0)
         if counter > 10000
@@ -12,7 +12,7 @@ function [root_value] = NR_root_finder(xIn, Bi_num, epsilon)
         end
         
         f_x = f(x_n, Bi_num);
-        df_x = derv_f(x_n); 
+        df_x = derv_f(x_n, Bi_num); 
         
         x_new = x_n - f_x/df_x;
         
@@ -24,9 +24,9 @@ function [root_value] = NR_root_finder(xIn, Bi_num, epsilon)
         else
             x_n = x_new;
         end
-        
-        
-        
+        disp([counter, x_new])
+        counter = counter + 1;        
     end
+    toc;
 end
 
