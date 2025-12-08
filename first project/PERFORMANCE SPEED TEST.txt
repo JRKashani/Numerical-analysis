@@ -28,3 +28,53 @@ Benchmarking for Bi=9.4, m=47...
 Manual Code Total Time:   68.4326 seconds
 AI Code Total Time:      234.5463 seconds
 Speedup Factor:          0.29x faster
+
+
+
+--------------------speed_check.m--------------------
+
+x = randi([1 600], 1, 1000)/10;
+y = randi(10000, 1, 1000);
+
+tic;
+for i = 1:1000
+    project1(x(i), y(i));
+end
+toc;
+
+
+>> speed_check
+Elapsed time is 25.049200 seconds.
+>> speed_check
+Elapsed time is 28.300633 seconds.
+>> speed_check
+Elapsed time is 25.938098 seconds.
+>> speed_check
+Elapsed time is 24.118749 seconds.
+>> speed_check
+Elapsed time is 26.874450 seconds.
+
+
+--------------------speed_test_AI.m--------------------
+
+x = randi([1 600], 1, 1000)/10;
+y = randi(10000, 1, 1000);
+
+tic;
+for i = 1:1000
+    SolveBesselAI(x(i), y(i));
+end
+toc;
+
+
+>> speed_test_AI
+Elapsed time is 177.906670 seconds.
+>> speed_test_AI
+Elapsed time is 196.428480 seconds.
+>> speed_test_AI
+Elapsed time is 188.661306 seconds.
+>> speed_test_AI
+Elapsed time is 189.041462 seconds.
+>> speed_test_AI
+Elapsed time is 191.873669 seconds.
+
