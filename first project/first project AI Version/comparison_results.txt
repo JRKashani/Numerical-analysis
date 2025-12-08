@@ -14,7 +14,7 @@ Bi     | m    | x (Manual)   | x (AI)       | Diff
 
 
 --- PART 2: PERFORMANCE SPEED TEST (10,000 Runs) ---
-Benchmarking for Bi=7.7, m=92...
-Manual Code Total Time:    9.7165 seconds
-AI Code Total Time:       41.2616 seconds
-Speedup Factor:          0.24x faster
+Benchmarking for Bi=38.0, m=10...
+Manual Code Total Time:    2.4627 seconds
+AI Code Total Time:        6.4833 seconds
+Speedup Factor:          0.38x faster
