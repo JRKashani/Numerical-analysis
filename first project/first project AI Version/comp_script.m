@@ -110,7 +110,7 @@ function [root_value] = project1(Bi, m)
         error("The root number must be a natural number.");
     end
 %defining the accuracy which we aim for.
-    epsilon = 10^(-6);
+    epsilon = 10^(-8);
         [lower_discon, higher_discon] = discont_finder(2.3, 2.6, m);
         root_value = Bi_section_root_finder(lower_discon + 0.01,...
             higher_discon - 0.01, Bi, epsilon);
