@@ -1,0 +1,46 @@
+n_rows = 10;
+n_cols = n_rows;
+K = (1:n_rows*n_cols)';
+
+row_vect = ceil(K / n_rows);
+col_vect = mod(K-1, n_rows) + 1;
+denom = 4;
+
+top = (row_vect == 1);
+bottom = (row_vect == n_rows);
+left_most = (col_vect == 1);
+right_most = (col_vect == n_cols);
+
+the_boundary = (top | bottom | left_most | right_most);
+is_inner_square = ~the_boundary;
+
+main_diag_row = K;
+main_diag_col = K;
+
+main_diag = ones(n_rows*n_cols, 1) * denom;
+main_diag(the_boundary) = 1;
+
+inner_square = K(is_inner_square);
+side_points = ones(length(inner_square), 1) * (-1);
+
+above_inner_row = inner_square;
+above_inner_col = inner_square - 1;
+
+below_inner_row = inner_square;
+below_inner_col = inner_square + 1;
+
+left_side_row = inner_square;
+left_side_col = inner_square - n_rows;
+
+right_side_row = inner_square;
+right_side_col = inner_square + n_rows;
+
+sp_row_vect = [main_diag_row, above_inner_row, below_inner_row...
+    left_side_row, right_side_row];
+sp_col_vect = [main_diag_col, above_inner_col, below_inner_col...
+    left_side_col, right_side_col];
+sp_value_vect = [main_diag, side_points, side_points, side_points,...
+    side_points];
+
+A = sparse(sp_row_vect, sp_col_vect, sp_value_vect, n_rows*n_cols,...
+    n_rows*n_cols);
