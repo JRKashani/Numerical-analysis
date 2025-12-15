@@ -8,30 +8,22 @@ function [temp_mat] = heat_calc(t_low,t_high)
     p.left_temp = 0;
     p.right_temp = -10;
     p.n_avrg = 4;
-    p.epsilon = 10 ^ (-6);
+    p.epsilon = 10 ^ (-7);
     
     validateattributes([t_low t_high], {'numeric'}, {'>=', ...
         p.lowest_temp,'<=', p.highest_temp, 'increasing'});
     validateattributes([p.mat_size_1 p.mat_size_2], {'numeric'}, {'>=', ...
         2,'<=', 100});
     if t_high == t_low
-        error("The temperarture on the sides aren't suppose to be equal");
+        error("The temperarture aren't suppose to be equal");
     end
     
     p.t_low = t_low;
     p.t_high = t_high;
 
-    p = initial_mat_guess(p);
+    [p.temp_mat, p.boundaries] = initial_mat_guess(p);
 
-    p = vectorized_laplacian_mat(p);
+    p.laplacian_mat = vectorized_laplacian_mat(p);
 
-    p = laplacian_solver_GS(p);
-
-    GS = p.temp_mat;
-
-    p = laplacian_solver_Jac(p);
-
-    Jac = p.temp_mat;
-
-    temp_mat = GS - Jac;
+    temp_mat = laplacian_solver_GS(p);
 end
