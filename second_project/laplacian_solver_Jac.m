@@ -18,13 +18,18 @@ function [p] = laplacian_solver_Jac(p)
     
     % For the Jacobi method, the matrix A is decomposed into three parts:
     % Lower triangular (L), Upper triangular (U), and Diagonal (D).
-    % The iteration requires the inverse of D.
-    L = tril(linear_equations_matrix, -1);
-    D = spdiags(diag(linear_equations_matrix), 0, p.n_parameters,...
-        p.n_parameters);
-    U = triu(linear_equations_matrix, 1);
-    LU = L+U; % Pre-calculated to avoid re-computing inside the loop
-    D1 = inverse_this_diag_matrix(D);
+    % The iteration requires the inverse of D. Given it will be faster, I
+    % avoided using the L and U matrises and preferred subtracting the main
+    % diagonal from the main matrix.
+
+    %L = tril(linear_equations_matrix, -1);
+     D = spdiags(diag(linear_equations_matrix), 0, p.n_parameters,...
+         p.n_parameters);
+    %U = triu(linear_equations_matrix, 1);
+    %LU = L+U; 
+    LU = linear_equations_matrix - D; % Pre-calculated to avoid
+                                      % re-computing inside the loop
+    D1 = p.inv_D; %from the laplacian_mat function
 
     while flag == 0
         counter = counter + 1;
@@ -38,8 +43,11 @@ function [p] = laplacian_solver_Jac(p)
         % Stopping Condition:
         % If the maximum change between iterations is less
         % than epsilon, the solution has converged.
-        if max(abs(x_new - x_old)) < p.epsilon
+        diff_vect = abs(x_new - x_old);
+        if max(diff_vect) < p.epsilon
             flag = 1;
+        elseif max(diff_vect) > 100
+            error("starting to diverge, no point of continuing");
         end
         
         x_old = x_new;

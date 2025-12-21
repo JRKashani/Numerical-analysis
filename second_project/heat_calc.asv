@@ -47,8 +47,6 @@ function [temp_mat] = heat_calc(t_low,t_high)
 
     % Jacobi method solver
     p = laplacian_solver_Jac(p);
-    
-    %p = laplacian_solver_GS_matrixfree(p);
 
     temp_mat = p.temp_mat;
 end

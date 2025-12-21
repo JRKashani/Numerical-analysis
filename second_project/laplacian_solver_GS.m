@@ -1,4 +1,4 @@
-% function [temp_mat] = laplacian_solver_GS(p)
+םךךםפ% function [temp_mat] = laplacian_solver_GS(p)
 % 
 %     flag = 0;
 %     counter = 0;

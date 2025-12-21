@@ -34,7 +34,9 @@ function [p] = vectorized_laplacian_mat(p)
     % and 1 for boundary nodes to enforce Dirichlet conditions via
     % identity rows
     main_diag = ones(n_rows*n_cols, 1) * denom;
+    inv_diag  = ones(n_rows*n_cols, 1) * 1/denom;
     main_diag(p.the_boundary) = 1;
+    inv_diag(p.the_boundary) = 1;
     
     % Off-diagonal entries corresponding to nearest-neighbor interactions
     % (−1 for each interior neighbor in the 5-point stencil)
@@ -56,6 +58,7 @@ function [p] = vectorized_laplacian_mat(p)
     % Sparse storage significantly reduces memory usage and computation cost
     p.laplacian_mat = sparse(sp_row_vect, sp_col_vect, sp_value_vect,...
                       n_rows*n_cols, n_rows*n_cols);
+    p.inv_D = sparse(K, K, inv_diag, n_rows*n_cols, n_rows*n_cols);
 end
 
 % --- Legacy / alternative sparse assembly approach (not used) ---
