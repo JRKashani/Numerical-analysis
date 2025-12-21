@@ -33,7 +33,7 @@ function [p] = laplacian_solver_Jac(p)
 
     while flag == 0
         counter = counter + 1;
-        if counter > 10000
+        if counter > 100000
             error("exceeded the maximum number of iterations");
         end
 

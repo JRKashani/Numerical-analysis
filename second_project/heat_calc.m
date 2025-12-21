@@ -14,7 +14,7 @@ function [temp_mat] = heat_calc(t_low,t_high)
     % Initialize solver parameter structure
     p.highest_temp = 100;
     p.lowest_temp = -30;
-    p.mat_size_1 = 16;
+    p.mat_size_1 = 200;
     p.mat_size_2 = p.mat_size_1;
     p.n_parameters = p.mat_size_1 * p.mat_size_2;
     p.left_temp = 0;
@@ -26,7 +26,7 @@ function [temp_mat] = heat_calc(t_low,t_high)
     validateattributes([t_low t_high], {'numeric'}, {'>=', ...
         p.lowest_temp,'<=', p.highest_temp, 'increasing'});
     validateattributes([p.mat_size_1 p.mat_size_2], {'numeric'}, {'>=', ...
-        2,'<=', 100});
+        2,'<=', 250});
     if t_high == t_low
         error("Boundary temperatures must not be equal.");
     end
