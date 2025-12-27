@@ -14,13 +14,13 @@ function [temp_mat] = heat_calc(t_low,t_high)
     % Initialize solver parameter structure
     p.highest_temp = 100;
     p.lowest_temp = -30;
-    p.mat_size_1 = 200;
+    p.mat_size_1 = 16;
     p.mat_size_2 = p.mat_size_1;
     p.n_parameters = p.mat_size_1 * p.mat_size_2;
     p.left_temp = 0;
     p.right_temp = -10;
     p.n_avrg = 4; % Number of neighboring points in 2D Laplacian stencil
-    p.epsilon = 10 ^ (-6);
+    p.epsilon = 10 ^ (-10);
     
    % Validate input arguments and internal parameters
     validateattributes([t_low t_high], {'numeric'}, {'>=', ...

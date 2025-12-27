@@ -33,21 +33,25 @@ function [p] = laplacian_solver_Jac(p)
 
     while flag == 0
         counter = counter + 1;
-        if counter > 100000
-            error("exceeded the maximum number of iterations");
-        end
-
         % The Jacobi Iteration Step: x_new = D_inv * (b - (L+U)*x_old)
         x_new = D1 * (b - LU * x_old);
 
         % Stopping Condition:
         % If the maximum change between iterations is less
         % than epsilon, the solution has converged.
-        diff_vect = abs(x_new - x_old);
-        if max(diff_vect) < p.epsilon
-            flag = 1;
-        elseif max(diff_vect) > 100
-            error("starting to diverge, no point of continuing");
+        % Given the run-time price, will be checked only once every 10
+        % iterations
+        if mod(counter, 10) == 0
+            if counter > 100000
+                error("exceeded the maximum number of iterations");
+            end
+            
+            diff_vect = abs(x_new - x_old);
+            if max(diff_vect) < p.epsilon
+                flag = 1;
+            elseif max(diff_vect) > 100
+                error("starting to diverge, no point of continuing");
+            end
         end
         
         x_old = x_new;
