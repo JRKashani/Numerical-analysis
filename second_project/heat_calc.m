@@ -1,8 +1,6 @@
 function [temp_mat] = heat_calc(t_low,t_high)
 % HEAT_CALC Solves the steady-state 2D heat equation on a square grid
-% using Gauss–Seidel or Jacobi methods and returns the heat matrix.
-%
-%   temp_mat = HEAT_CALC(t_low, t_high)
+% using Jacobi method and returns the heat matrix.
 %
 % Inputs:
 %   t_low   - Lower boundary temperature
