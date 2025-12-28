@@ -33,6 +33,7 @@ function [p] = laplacian_solver_Jac(p)
 
     while flag == 0
         counter = counter + 1;
+        
         % The Jacobi Iteration Step: x_new = D_inv * (b - (L+U)*x_old)
         x_new = D1 * (b - LU * x_old);
 
@@ -45,7 +46,7 @@ function [p] = laplacian_solver_Jac(p)
             if counter > 100000
                 error("exceeded the maximum number of iterations");
             end
-            
+
             diff_vect = abs(x_new - x_old);
             if max(diff_vect) < p.epsilon
                 flag = 1;
