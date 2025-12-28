@@ -22,7 +22,7 @@ function [p] = initial_mat_guess(p)
     
     % Linearly interpolated temperature profiles between opposing
     % boundaries
-    t_rows = p.t_high + y_cent * (p.t_low - p.t_high);
+    t_rows = p.t_high    + y_cent * (p.t_low      - p.t_high);
     t_cols = p.left_temp + x_cent * (p.right_temp - p.left_temp);
     
     % This initialization provides a smooth starting field, reducing the
