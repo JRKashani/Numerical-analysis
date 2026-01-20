@@ -32,4 +32,5 @@ function [p] = initial_mat_guess(p)
     % linear boundary interpolations
     Initialized_mat(2 : end-1 , 2 : end-1) = (t_rows + t_cols) / 2;
     p.temp_mat = Initialized_mat;
+    p.ini_check = Initialized_mat;
 end

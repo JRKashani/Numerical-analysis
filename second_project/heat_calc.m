@@ -1,4 +1,4 @@
-function [temp_mat] = heat_calc(t_low,t_high)
+function [temp_mat, initial_guess] = heat_calc(t_low,t_high)
 % HEAT_CALC Solves the steady-state 2D heat equation on a square grid
 % using Jacobi method and returns the heat matrix.
 %
@@ -12,7 +12,7 @@ function [temp_mat] = heat_calc(t_low,t_high)
     % Initialize solver parameter structure
     p.highest_temp = 100;
     p.lowest_temp = -30;
-    p.mat_size_1 = 16;
+    p.mat_size_1 = 200;
     p.mat_size_2 = p.mat_size_1;
     p.n_parameters = p.mat_size_1 * p.mat_size_2;
     p.left_temp = 0;
@@ -35,7 +35,10 @@ function [temp_mat] = heat_calc(t_low,t_high)
 
     % To reduce convergence time, initialize the temperature field using
     % a weighted average of the boundary temperatures rather than zeros
-    p = initial_mat_guess(p);
+    %tic;
+    p = initial_mat_guess_scattered(p);
+    %p = initial_mat_guess(p);
+    %toc;
     
     % Construct the discrete Laplacian matrix (N x N), one row per grid
     % point. Boundary nodes are retained for indexing consistency; their
@@ -45,10 +48,15 @@ function [temp_mat] = heat_calc(t_low,t_high)
 
     % Jacobi method solver
     p = laplacian_solver_Jac(p);
+
+    %p = laplacian_solver_GS_4step(p);
     
     %p = laplacian_solver_GS_matrixfree(p);
 
+    %temp_mat = abs(p.temp_mat - p.ini_check);
+
     temp_mat = p.temp_mat;
+    initial_guess = p.ini_check;
 end
 
 %--------------------Legacy------------------------------
