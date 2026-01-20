@@ -18,10 +18,10 @@ function [p] = vectorized_laplacian_mat(p)
     % The following expressions recover (i,j) grid indices from k.
     
     %boolean vectors meant to allow manipulation of the main vector
-    top          = (row_vect == 1);
-    bottom       = (row_vect == n_rows);
-    left_most    = (col_vect == 1);
-    right_most   = (col_vect == n_cols);
+    top            = (row_vect == 1      );
+    bottom         = (row_vect == n_rows );
+    left_most      = (col_vect == 1      );
+    right_most     = (col_vect == n_cols );
     p.the_boundary = (top | bottom | left_most | right_most);
     
     
