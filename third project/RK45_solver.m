@@ -1,63 +1,68 @@
 function [U, t] = RK45_solver(func, t_span, u0, para)
     
+    if isfield(para, 'h_init')
+        h = para.h_init;
+    else
+        h = 0.01;
+    end
+    if isfield(para, 'h_max')
+        h_max = para.h_max;
+    else
+        h_max = 0.1;
+    end
     eps = para.epsilon;
-    h_max = para.h_max;
     [A, err, b5, c] = RKF_Butcher_Tableau();
     solver_ks = length(b5);
+    n_vars = para.ode_rank;
 
     if isscalar(t_span)
         t_span = [0, t_span];
     end
     
-    min_est = ceil((t_span(end)-t_span(1))/h_max);
-    t          = zeros(min_est, 1);
-    U          = zeros(min_est, para.ode_rank);    
-    rel_slopes = zeros(para.ode_rank, solver_ks);
-    curr_step  = 0;
+    min_est    = max(ceil((t_span(end)-t_span(1))/h_max), 1000);
 
-    U(:, 1) = u0;
+    t          = zeros(10*min_est, 1); %data point legend
+    U          = zeros(10*min_est, n_vars); %variables stats
+    K          = zeros(n_vars, solver_ks); %slopes
+
+    curr_step  = 1;
+    U(:, 1) = u0(:);
+    t(1) = t_span(1);
     
-    while (t(curr_step) < t_span)
+    while (t(curr_step) < t_span(end))
         uk = U(:, curr_step);
         for j = 1:solver_ks
             if j == 1
                 temp_prob = uk;
             else
-                temp_prob = ...
-                    uk + (h * (rel_slopes(:, 1:j-1) * A(j, 1:j-1).'));
+                temp_prob = uk + (h * (K(:, 1:j-1) * A(j, 1:j-1).'));
             end
-            rel_slopes(:, j) = func(t(curr_step) + c(j)*h, temp_prob);
+            K(:, j) = func(t(curr_step) + c(j)*h, temp_prob);
         end
 
-        u5    = uk + h * (rel_slopes * b5);
-        u_err = uk + h * (rel_slopes * err);
+        u5    = uk + h * (K * b5);
+        u_err = uk + h * (K * err);
         R     = (1/h)*max(abs(u_err));
         delta = 0.841*(eps/R)^0.25; %The 0.841 is approx 0.5^0.25 and
         % reason for 0.25 is that the general error is of size O(h^4)
         
-        if delta <= 0.1
-            h = 0.1*h;
-        elseif delta > 4
-            h = 4*h;                
-        else
-            h = delta*h;
-        end
-
-        if h > h_max
-            h = h_max;
-        end
+        delta = max(0.1, min(4, delta));
+        h     = min(delta*h, h_max);
 
         if R <= eps %step accepted, procced
             U(curr_step + 1, :) = u5;
             curr_step = curr_step + 1;
             
             if curr_step > (length(t) - 1) %partial preallocation, 
-                % 1000 elements each
-                t = [t; zeros(250, 1)];
-                U = [U; zeros(250, para.ode_rank)];
+                % 2000 elements each
+                t = [t; zeros(500, 1)];
+                U = [U; zeros(500, n_vars)];
             end
         end
         
         t(curr_step) = t(curr_step - 1) + h;
     end
+
+    t = t(1:curr_step);
+    U = U(:, 1:curr_step);
 end
