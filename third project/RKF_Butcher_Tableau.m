@@ -1,4 +1,4 @@
-function [A, b4, b5, c] = RKF_Butcher_Tableau(~)
+function [A, err, b5, c] = RKF_Butcher_Tableau(~)
 %The function would recieve no input arguments and will return a matrix and
 %3 vectors of the parameters needed for the RKF method
     A = [0           0           0           0           0      0;
@@ -11,6 +11,8 @@ function [A, b4, b5, c] = RKF_Butcher_Tableau(~)
 
     b5 = [16/135; 0; 6656/12825; 28561/56430; -9/50; 2/55];
     b4 = [25/216; 0; 1408/2565;  2197/4104;   -1/5;  0];
+
+    err = b5 - b4;
 
     c  = [0; 1/4; 3/8; 12/13; 1; 1/2]; 
 end
