@@ -26,6 +26,4 @@ function [para, t, U] = RK4_solver(func, t_span, u0, para)
         % the dervs multiplyed by the time step
         uk = U(i + 1, :); %appending the current state to the stats matrix
     end
-    
-
 end
