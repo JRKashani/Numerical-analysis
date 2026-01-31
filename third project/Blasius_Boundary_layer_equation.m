@@ -6,7 +6,9 @@ function [eta, func_and_dervs] = ...
 
     parameters.epsilon = 10^(-6);
     parameters.h = (parameters.epsilon/10)^(1/4);
-    eta_span = 12;
+    eta_span = 10;
     parameters.hmax = 0.1;
+
+    sec_der_of_f_at_0
     
 end

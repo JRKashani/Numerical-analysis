@@ -1,40 +1,39 @@
-function [U, t, ] = RK45_solver(func, t_span, u0, para)
+function [U, t] = RK45_solver(func, t_span, u0, para)
     
     eps = para.epsilon;
-    hmax = para.hmax;
-    
-    
-    t = zeros(ceil(t_span/hmax), 1);
-    U = zeros(length(t), para.ode_rank);
-    curr_step = 0;
-    
+    h_max = para.h_max;
     [A, err, b5, c] = RKF_Butcher_Tableau();
-    solver_ks = 6;    
+    solver_ks = length(b5);
 
-    rel_slopes = zeros(para.ode_rank, solver_ks);
+    if isscalar(t_span)
+        t_span = [0, t_span];
+    end
     
-    while (t(curr_step) < t_span)        
+    t          = zeros(ceil((t_span(end)-t_span(1))/h_max), 1);
+    U          = zeros(length(t), para.ode_rank);    
+    rel_slopes = zeros(para.ode_rank, solver_ks);
+    curr_step  = 0;
+
+    U(:, 1) = u0;
+    
+    while (t(curr_step) < t_span)
+        uk = U(:, curr_step);
         for j = 1:solver_ks
             if j == 1
                 temp_prob = uk;
             else
-                temp_prob = uk+(h* (rel_slopes(:, 1:j-1) * A(j, 1:j-1).'));
+                temp_prob = ...
+                    uk + (h * (rel_slopes(:, 1:j-1) * A(j, 1:j-1).'));
             end
             rel_slopes(:, j) = func(t(curr_step) + c(j)*h, temp_prob);
         end
-        u5 = uk + h * (rel_slopes * b5);
+
+        u5    = uk + h * (rel_slopes * b5);
         u_err = uk + h * (rel_slopes * err);
-        R = (1/h)*max(abs(u_err));
-        if R <= eps
-            U(curr_step + 1, :) = u5;
-            curr_step = curr_step + 1;
-            if curr_step > length(t)
-                t = [t; zeros(1000, 1)];
-                U = [U; zeros(1000, para.ode_rank)];
-            end
-        end
-        delta = 0.841*(eps/R)^0.25; %The 0.84 is approx 0.5^0.25 and
+        R     = (1/h)*max(abs(u_err));
+        delta = 0.841*(eps/R)^0.25; %The 0.841 is approx 0.5^0.25 and
         % reason for 0.25 is that the general error is of size O(h^4)
+        
         if delta <= 0.1
             h = 0.1*h;
         elseif delta > 4
@@ -42,11 +41,22 @@ function [U, t, ] = RK45_solver(func, t_span, u0, para)
         else
             h = delta*h;
         end
-        if h > hmax
-            h = hmax;
+        if h > h_max
+            h = h_max;
         end
-        t(curr_step) = t(curr_step - 1);
+
+        if R <= eps %step accepted, procced
+            U(curr_step + 1, :) = u5;
+            curr_step = curr_step + 1;
+            
+            if curr_step > (length(t) - 1) %partial preallocation, 
+                % 1000 elements each
+                t = [t; zeros(250, 1)];
+                U = [U; zeros(250, para.ode_rank)];
+            end
+        end        
+        
+        t(curr_step) = t(curr_step - 1) + h;
         rel_slopes(:,:) = 0;
     end
-
 end
