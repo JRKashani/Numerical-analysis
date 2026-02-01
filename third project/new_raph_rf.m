@@ -8,13 +8,13 @@ function [x, iter] = new_raph_rf(func, x, tol, max_iter, xmin, xmax)
         if abs(f) < tol
             return;
         end
-        
+
         % Stability Check: Relative derivative magnitude
         if abs(df) < 1e-12 * (1 + abs(f))
             error('Derivative too small relative to f(x)');
         end
         
-        x_new = x - f/df;
+        x_new = x - (f/df);
         
         % Constraint Check: Must stay inside bracket
         if x_new < xmin || x_new > xmax
