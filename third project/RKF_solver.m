@@ -1,4 +1,4 @@
-function [U, t] = RK45_solver(func, t_span, u0, para)
+function [U, t] = RKF_solver(func, t_span, u0, para)
     
     if isfield(para, 'h_init')
         h = para.h_init;
@@ -10,17 +10,25 @@ function [U, t] = RK45_solver(func, t_span, u0, para)
     else
         h_max = 0.1;
     end
-
+    if isfield(para, 'safety_factor')
+        safety_factor = para.safety_factor;
+    else
+        safety_factor = 0.9;
+    end
+    
     eps = para.epsilon;
     [A, err, b5, c] = RKF_Butcher_Tableau();
     solver_ks = length(b5);
     n_vars = para.ode_rank;
+    steps_limit = para.max_steps;
+    n_steps = 0;
 
     if isscalar(t_span)
         t_span = [0, t_span];
     end
     
     min_est    = max(ceil((t_span(end)-t_span(1))/h_max), 1000);
+    t_length = 10*min_est;
 
     t          = zeros(10*min_est, 1); %data point legend
     U          = zeros(n_vars, 10*min_est); %variables stats
@@ -31,6 +39,9 @@ function [U, t] = RK45_solver(func, t_span, u0, para)
     t(1) = t_span(1);
     
     while (t(curr_step) < t_span(end))
+        if n_steps > steps_limit
+            error("Too many iterations");
+        end
         uk = U(:, curr_step);
         for j = 1:solver_ks
             if j == 1
@@ -41,30 +52,34 @@ function [U, t] = RK45_solver(func, t_span, u0, para)
             K(:, j) = func(t(curr_step) + c(j)*h, temp_prob);
         end
 
-        u5    = uk + h * (K * b5);
-        u_err = uk + h * (K * err);
+        u5     = uk + h * (K * b5);
         
-        R     = (1/h)*max(abs(u_err));
-        delta = (eps / (2*R)) ^0.25; %The reason for 0.25 is that the
-        % general error is of size O(h^4)
+        du_err = h * (K * err);
+        %R     = (1/eps)*(1/h)*max(abs(du_err)); %Legacy error estimate (from 
+        % "Numerical Analysis", was replaced by the new R, derived from
+        % "Solving ODE I"
+        sizing_factor = eps * (1 + max(abs(u5), abs(uk)));
+        R = max(abs(du_err) ./ sizing_factor);
+        delta = safety_factor * (1 / (R)) ^0.2; %The reason for 0.2 is that the
+        % local error is of size O(h^5)        
+        delta = max(0.1, min(4, delta));        
         
-        delta = max(0.1, min(4, delta));
-        h     = min(delta*h, h_max);
-        
-        relative_error = abs(u_err) ./ (1 + abs(uk));
-        if R <= eps %step accepted, procced
+        if R <= 1 %step accepted, procced
             U(:, curr_step + 1) = u5;
-            t(curr_step + 1) = t(curr_step) + h;
-            curr_step = curr_step + 1;
+            t(curr_step + 1) = t(curr_step) + h;            
             
-            if curr_step > (length(t) - 1) %partial preallocation, 
+            if curr_step > t_length %partial preallocation, 
                 % 2000 elements each
                 t = [t; zeros(500, 1)];
-                U = [U; zeros(n_vars, 500)];
+                U = [U,  zeros(n_vars, 500)];
+                t_length = t_length + 500;
             end
+
+            curr_step = curr_step + 1;
         end
-        
-        
+
+        h     = min(delta*h, h_max);
+        n_steps = n_steps + 1;
     end
 
     t = t(1:curr_step);
