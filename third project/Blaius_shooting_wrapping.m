@@ -1,4 +1,6 @@
-function [actual_ddf_at_zero] = Blaius_shooting_wrapping(initial_guess)
+function [actual_ddf_at_zero, counter] =...
+    Blaius_shooting_wrapping(~)
     
-    
+    [actual_ddf_at_zero, counter] = ...
+        new_raph_rf(@Blasius_Wrapping, rand(), 1e-10, 1000, 0, 1);
 end
