@@ -1,10 +1,10 @@
-function [root_value, counter] = Bi_sect_rf(xIn1, xIn2, epsilon)
+function [root_value, counter] = Bi_sect_rf(f, xIn1, xIn2, epsilon)
 %This function utelize the Bi-section method for finding a root of a
 %function in a limited range - the function will recive boundries
 %and tolerance, and return an 'x' which its function value is within
 %an epsilon from zero.
     
-    f = @(ddf_at_zero) (Blasius_Wrapping(ddf_at_zero) - 1);
+    %f = @(ddf_at_zero) (Blasius_Wrapping(ddf_at_zero) - 1);
 
     %initilizing the parameters and aux variables
     flag = 0;
@@ -15,7 +15,7 @@ function [root_value, counter] = Bi_sect_rf(xIn1, xIn2, epsilon)
     root_value = 0;
 
     if f(lower)*f(upper) > 0
-        upper = lower + 0.1;
+        upper = 2*upper - lower ;
         %for cases the boundries weren't defined correctly, this will
         %provide a result, although less reliable one.
     end
