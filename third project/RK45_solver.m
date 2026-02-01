@@ -10,6 +10,7 @@ function [U, t] = RK45_solver(func, t_span, u0, para)
     else
         h_max = 0.1;
     end
+
     eps = para.epsilon;
     [A, err, b5, c] = RKF_Butcher_Tableau();
     solver_ks = length(b5);
@@ -22,7 +23,7 @@ function [U, t] = RK45_solver(func, t_span, u0, para)
     min_est    = max(ceil((t_span(end)-t_span(1))/h_max), 1000);
 
     t          = zeros(10*min_est, 1); %data point legend
-    U          = zeros(10*min_est, n_vars); %variables stats
+    U          = zeros(n_vars, 10*min_est); %variables stats
     K          = zeros(n_vars, solver_ks); %slopes
 
     curr_step  = 1;
@@ -42,25 +43,28 @@ function [U, t] = RK45_solver(func, t_span, u0, para)
 
         u5    = uk + h * (K * b5);
         u_err = uk + h * (K * err);
+        
         R     = (1/h)*max(abs(u_err));
-        delta = 0.841*(eps/R)^0.25; %The 0.841 is approx 0.5^0.25 and
-        % reason for 0.25 is that the general error is of size O(h^4)
+        delta = (eps / (2*R)) ^0.25; %The reason for 0.25 is that the
+        % general error is of size O(h^4)
         
         delta = max(0.1, min(4, delta));
         h     = min(delta*h, h_max);
-
+        
+        relative_error = abs(u_err) ./ (1 + abs(uk));
         if R <= eps %step accepted, procced
-            U(curr_step + 1, :) = u5;
+            U(:, curr_step + 1) = u5;
+            t(curr_step + 1) = t(curr_step) + h;
             curr_step = curr_step + 1;
             
             if curr_step > (length(t) - 1) %partial preallocation, 
                 % 2000 elements each
                 t = [t; zeros(500, 1)];
-                U = [U; zeros(500, n_vars)];
+                U = [U; zeros(n_vars, 500)];
             end
         end
         
-        t(curr_step) = t(curr_step - 1) + h;
+        
     end
 
     t = t(1:curr_step);
