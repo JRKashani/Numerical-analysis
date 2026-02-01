@@ -1,4 +1,4 @@
-function [t, U] = RKF_solver(func, t_span, u0, para)
+function [U, t] = RKF_solver(func, t_span, u0, para)
     
     if isfield(para, 'h_init')
         h = para.h_init;
