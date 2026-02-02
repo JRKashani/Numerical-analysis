@@ -1,4 +1,11 @@
 function [t, U] = RKF_solver(func, t_span, u0, para)
+% RKF_solver implementing the Runge-Kutta-Fehlberg from "Numerical
+% Analysis" of Burden & Faires with a Butcher tableau stored in a different
+% function.
+% The function accept a function, a time span, initial values and some
+% parameters: ODE rank = the number of equations connecting the function and
+% it derivitives, epsilon = the tolerance - function as relative tolerance
+% and absolute one at once, h_init = the initial step size, h_max = 
     
     if isfield(para, 'h_init')
         h = para.h_init;
