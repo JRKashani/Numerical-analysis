@@ -8,7 +8,7 @@ function [df_dist_from_one, dg] = Blasius_Wrapping(ddf_at_zero)
     para.h_init    = 0.05;
     para.h_max     = 0.1;
     para.max_steps = 20000;
-    para.safety_factor = 0.1;
+    para.safety_factor = 0.9;
     %delta_t = sqrt(para.epsilon);
 
     t_span = [0, 15];
