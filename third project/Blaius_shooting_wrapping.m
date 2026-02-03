@@ -1,6 +1,6 @@
-function [actual_ddf_at_zero, counter] =...
-    Blaius_shooting_wrapping(initial_guess)
+function [actual_ddf_at_zero, counter] = Blaius_shooting_wrapping(~)
     
-    [actual_ddf_at_zero, counter] = ...
-        new_raph_rf(@Blasius_Wrapping, initial_guess, 1e-10, 1000, 0, 1);
+    %initial_guess = 0.332057336215581;
+    initial_guess = rand();
+    [actual_ddf_at_zero, counter] = Secant_rf(initial_guess);
 end
