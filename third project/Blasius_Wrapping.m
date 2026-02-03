@@ -8,12 +8,12 @@ function [df_dist_from_one] = Blasius_Wrapping(ddf_at_zero)
     %para.delta     = 0.1;     % step size for RK4, legacy
     para.epsilon   = 10^(-8);   % tolerance for RKF
     para.h_init    = 0.005;     % very small, but will be adapted swiftly
-    para.h_max     = 0.25;      % to prevent the solver miss changes.
+    para.h_max     = 0.1;      % to prevent the solver miss changes.
     para.max_steps = 20000;     %machine dependent, theoretically
     para.safety_factor = 0.841; %0.5^0.25, will elaborate at the notebook
     
 
-    t_span = [0, 12]; %the function won't change much after 10, but the
+    t_span = [0, 10]; %the function won't change much after 10, but the
     % cost of the safety factor was negligable.
     u0 = [0; 0; ddf_at_zero]; %initial values vector : f(0) = 0; f'(0) = 0;
     % f''(0) = given value.
@@ -21,7 +21,7 @@ function [df_dist_from_one] = Blasius_Wrapping(ddf_at_zero)
     func = @(t, u) [ u(2); u(3); (-0.5) * u(1) * u(3)]; %The blasius 
     % boundary equation, linearised.
 
-    [~, U] = RKF_solver(func, t_span, u0, para); %the eta values are 
+    [eta, U] = RKF_solver(func, t_span, u0, para); %the eta values are 
     % omitted, given the arent relevant to the assignment
    
     df_dist_from_one = U(2, end) - 1; %regardless to noise, the last
