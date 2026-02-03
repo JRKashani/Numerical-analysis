@@ -36,6 +36,7 @@ function [right_ddf_at_zero, counter] = Secant_rf(initial_guess)
         if abs(f3) < epsilon
             flag = 1;
             right_ddf_at_zero = x_new;
+            return;
         else
             x_old = x_curr;
             x_curr = x_new;

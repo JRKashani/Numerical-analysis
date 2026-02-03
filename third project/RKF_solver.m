@@ -52,7 +52,7 @@ function [t, U] = RKF_solver(func, t_span, u0, para)
     n_steps = 0;
     
 
-    while (t(curr_step) < t_span(end)) %there is a solution for the
+    while (t(curr_step) <= t_span(end)) %there is a solution for the
         % t_span(end) data point
         if n_steps > steps_limit
             error("Too many iterations");
@@ -117,22 +117,38 @@ function [t, U] = RKF_solver(func, t_span, u0, para)
         curr_step = curr_step - 1; %returning to the privious data point
         h = t_span(2) - t(curr_step); %adjusting the step size to perfectly
         % align with t_span(2)
+        [A, b4, c] = RK4_Butcher_Tableau();
+        solver_ks = 4;
         uk = U(:, curr_step);
-        
+        K = zeros(n_vars, solver_ks); %slopes
+
+        for j = 1:solver_ks %k1 to k4, for each variable
+            if j == 1
+                temp_prob = uk;
+            else
+                temp_prob = uk + (h * (K(:, 1:j-1) * A(j, 1:j-1).'));
+            end
+            K(:, j) = func(t(curr_step) + c(j)*h, temp_prob);
+        end
+        U(:, curr_step + 1) = uk + h * (K * b4);        
         %classic RK4, with no error handeling or adaptive step sizing.
         % it might be an overkill, but it will keep the global error at
         % O(h^4)
-        k1 = func(t(curr_step),      uk); %dervs at the original point, u_k
-        k2 = func(t(curr_step)+ h/2, uk + ((h/2) * k1)); %dervs at the point 
-                %which will get to after a half step in f1 direction
-        k3 = func(t(curr_step)+ h/2, uk + ((h/2) * k2)); %dervs at the point 
-                %which will get to after a half step in f2 direction
-        k4 = func(t(curr_step)+ h,   uk +  (h    * k3)); %dervs at the point 
-
-        U(:, curr_step + 1) = uk + ((h/6) * (k1 + 2*k2 + 2*k3 + k4));
+        
+        curr_step = curr_step + 1;
         %n_steps = n_steps + 1;
     end
     %trimming the redundant parts of the vectors
-    t = t(1:curr_step + 1);
-    U = U(:, 1:curr_step + 1);
+    t = t(1:curr_step);
+    U = U(:, 1:curr_step);
 end
+
+
+        % k1 = func(t(curr_step),      uk); %dervs at the original point, u_k
+        % k2 = func(t(curr_step)+ h/2, uk + ((h/2) * k1)); %dervs at the point 
+        %         %which will get to after a half step in f1 direction
+        % k3 = func(t(curr_step)+ h/2, uk + ((h/2) * k2)); %dervs at the point 
+        %         %which will get to after a half step in f2 direction
+        % k4 = func(t(curr_step)+ h,   uk +  (h    * k3)); %dervs at the point 
+        % 
+        % U(:, curr_step + 1) = uk + ((h/6) * (k1 + 2*k2 + 2*k3 + k4));

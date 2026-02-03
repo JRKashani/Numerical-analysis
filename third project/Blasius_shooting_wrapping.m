@@ -1,4 +1,4 @@
-function [actual_ddf_at_zero, counter] = Blaius_shooting_wrapping(~)
+function [actual_ddf_at_zero, counter] = Blasius_shooting_wrapping(~)
     
     %initial_guess = 0.332057336215581;
     initial_guess = rand();
