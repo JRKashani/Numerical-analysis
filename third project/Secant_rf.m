@@ -2,13 +2,13 @@ function [right_ddf_at_zero, counter] = Secant_rf(initial_guess)
     %The function utilize the secant root finding method to find the
     %initial value of f''(0) that will get f'(inf) = 1 as required
 
-    func = @Blasius_Wrapping;
+    func = @(x) Blasius_Wrapping_Error(x);
     
     %initializing the parameters
     flag = 0;
     upper_limit = 1;
     lower_limit = 0;
-    epsilon = 10^-5;
+    epsilon = 10^-8;
     counter = 0;    
     x_old = 0;
     if initial_guess <= lower_limit || initial_guess > upper_limit
@@ -22,8 +22,8 @@ function [right_ddf_at_zero, counter] = Secant_rf(initial_guess)
     x_new = 0;
 
     while flag == 0
-        counter = counter + 1;
-
+        counter = counter + 1ף
+        
         if counter > 1000
             error("Too many iterations!");
         end        
@@ -44,4 +44,9 @@ function [right_ddf_at_zero, counter] = Secant_rf(initial_guess)
             f2 = f3;
         end
     end
+end
+
+function error_value = Blasius_Wrapping_Error(x)
+    [~, U] = Blasius_Wrapping(x);
+    error_value = U(2, end) - 1;
 end

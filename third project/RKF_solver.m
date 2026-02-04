@@ -50,9 +50,10 @@ function [t, U] = RKF_solver(func, t_span, u0, para)
     U(:, 1) = u0(:);
     t(1) = t_span(1);
     n_steps = 0;
+    shortcut = -inf;
     
 
-    while (t(curr_step) <= t_span(end)) %there is a solution for the
+    while (t(curr_step) < t_span(end)) %there is a solution for the
         % t_span(end) data point
         if n_steps > steps_limit
             error("Too many iterations");
@@ -95,14 +96,25 @@ function [t, U] = RKF_solver(func, t_span, u0, para)
         
         if R <= 1 %step accepted, procced
             U(:, curr_step + 1) = u5;
-            t(curr_step + 1) = t(curr_step) + h;            
+            t(curr_step + 1) = t(curr_step) + h;
             
-            if curr_step > t_length %partial preallocation, 
+            if curr_step >= t_length %partial preallocation, 
                 % 2000 elements each, in case the previous ones werent
                 % enough
                 t = [t; zeros(500, 1)];
                 U = [U,  zeros(n_vars, 500)];
                 t_length = t_length + 500;
+            end
+            
+            if mod(curr_step, 10) == 0 %in case of decline in change
+                if abs(U(3, curr_step)) < eps && ...
+                        abs(shortcut - U(2,curr_step)) < eps
+                    t = t(1:curr_step);
+                    U = U(:, 1:curr_step);
+                    break;
+                else
+                    shortcut = U(2,curr_step);
+                end
             end
             curr_step = curr_step + 1;
         end
@@ -113,7 +125,7 @@ function [t, U] = RKF_solver(func, t_span, u0, para)
         n_steps = n_steps + 1;
     end
     
-    if t(curr_step) > t_span(2) %in case the last data point isn't t_span(2)
+    if t(curr_step) ~= t_span(2) %in case the last data point isn't t_span(2)
         curr_step = curr_step - 1; %returning to the privious data point
         h = t_span(2) - t(curr_step); %adjusting the step size to perfectly
         % align with t_span(2)
@@ -134,7 +146,8 @@ function [t, U] = RKF_solver(func, t_span, u0, para)
         %classic RK4, with no error handeling or adaptive step sizing.
         % it might be an overkill, but it will keep the global error at
         % O(h^4)
-        
+       
+        t(curr_step + 1) = t(curr_step) + h;
         curr_step = curr_step + 1;
         %n_steps = n_steps + 1;
     end
