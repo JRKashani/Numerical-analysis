@@ -176,4 +176,32 @@ for i = 1:numel(files)
     fprintf('0.2%% offset yield: eps=%.6f, sigma0.2=%.2f [MPa]\n', epsY, sigmaY);
     fprintf('Peak: eps=%.6f, sigma_max=%.2f [MPa]\n', epsAtMax, sigmaMax);
     fprintf('Area = %.2f [MPa] (~%.2f [MJ/m^3])\n', areaUnder, areaUnder);
+
+    % Store curves for comparison plot
+    strain_all{i} = strain_use;
+    stress_all{i} = stress_use;
+
 end
+
+%% Comparison plot: Steel vs Aluminum (clean curves only)
+
+figure('Color','w');
+hold on; grid on;
+
+plot(strain_all{1}, stress_all{1}, 'LineWidth', 1.6);
+plot(strain_all{2}, stress_all{2}, 'LineWidth', 1.6);
+
+xlabel('Engineering Strain, \epsilon [–]');
+ylabel('Engineering Stress, \sigma [MPa]');
+title('Stress–Strain Comparison');
+
+legend({'SAE-1045', 'Aluminum 6061'}, 'Location', 'best');
+
+xlim([0, max([strain_all{1}; strain_all{2}]) * 1.02]);
+ylim([0, max([stress_all{1}; stress_all{2}]) * 1.05]);
+
+% Save figure
+exportgraphics(gcf, 'stress_strain_comparison.png', 'Resolution', 300);
+
+hold off;
+
